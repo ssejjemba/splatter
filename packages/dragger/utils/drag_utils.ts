@@ -38,14 +38,6 @@ export function getCurrentTouches(
   };
 }
 
-export function getPinchDistance(pointA: Pointer, pointB: Pointer) {
-  // Return the distance between the two points
-  const dx = pointA.x - pointB.x;
-  const dy = pointA.y - pointB.y;
-
-  return Math.sqrt(dx * dx + dy * dy);
-}
-
 export function calcMidPoint(pointA: Pointer, pointB: Pointer) {
   return {
     x: (pointB.x - pointA.x) * 0.5,
@@ -53,18 +45,18 @@ export function calcMidPoint(pointA: Pointer, pointB: Pointer) {
   };
 }
 
-export const getDistance = (p1: Pointer, p2: Pointer) => {
+const getDistance = (p1: Pointer, p2: Pointer) => {
   const powX = (p1.x - p2.x) ** 2;
   const powY = (p1.y - p2.y) ** 2;
 
   return Math.sqrt(powX + powY);
 };
 
-export const getAngleDeg = (p1: Pointer, p2: Pointer) => {
+const getAngleDeg = (p1: Pointer, p2: Pointer) => {
   return (Math.atan2(p1.y - p2.y, p1.x - p2.x) * 180) / Math.PI;
 };
 
-export class Pointer implements IPoint {
+class Pointer implements IPoint {
   x: number;
   y: number;
 
