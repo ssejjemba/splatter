@@ -8,7 +8,7 @@ export interface IPoint {
   y: number;
 }
 
-export type TouchEventData = {
+export type DragEventData = {
   preventDefault(): void;
   stopPropagation(): void;
   pointers: Array<IPoint>;
@@ -23,9 +23,9 @@ export type TouchEventData = {
 };
 
 export type DragHandlers = {
-  onDragStart(event: TouchEventData): void;
-  onDragMove(event: TouchEventData): void;
-  onDragEnd(event: TouchEventData): void;
+  onDragStart(event: DragEventData): void;
+  onDragMove(event: DragEventData): void;
+  onDragEnd(event: DragEventData): void;
 };
 
 export type DragEvents = "onDragStart" | "onDragMove" | "onDragEnd";

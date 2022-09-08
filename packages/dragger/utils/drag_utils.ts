@@ -1,11 +1,11 @@
-import { IPoint, TouchEventData } from "../models";
+import { IPoint, DragEventData } from "../models";
 
 export function getCurrentTouches(
-  originalEvent: TouchEvent,
-  touches: TouchList,
-  prevTouch: TouchEventData | null,
-  initialTouch: TouchEventData | null
-): TouchEventData {
+  originalEvent: TouchEvent | MouseEvent,
+  touches: TouchList | Array<MouseEvent>,
+  prevTouch: DragEventData | null,
+  initialTouch: DragEventData | null
+): DragEventData {
   const firstTouch = initialTouch;
 
   const pointer = new Pointer(touches[0]);
@@ -68,7 +68,7 @@ export class Pointer implements IPoint {
   x: number;
   y: number;
 
-  constructor(touch: Touch) {
+  constructor(touch: Touch | MouseEvent) {
     this.x = touch.clientX;
     this.y = touch.clientY;
   }

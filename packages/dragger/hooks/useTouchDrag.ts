@@ -1,16 +1,17 @@
-import React, { useEffect, useRef } from "react";
-import { DragEvents, DragHandlers, TouchEventData } from "../models";
-import { getCurrentTouches } from "../utils/touch_utils";
+import React, { useEffect, useRef, useState } from "react";
+import { DragEvents, DragHandlers, DragEventData } from "../models";
+import { getCurrentTouches } from "../utils/drag_utils";
 
-let touches: TouchEventData | null = null;
+let touches: DragEventData | null = null;
 
 export function useTouchDrag(
   elementRef: React.RefObject<HTMLElement>,
   handlers: DragHandlers
-) {
-  const initialTouches = useRef<TouchEventData | null>(null);
+): { isDragging: boolean } {
+  const [isDragging, setIsDragging] = useState(false);
+  const initialTouches = useRef<DragEventData | null>(null);
 
-  const callHandler = (eventName: DragEvents, event: TouchEventData) => {
+  const callHandler = (eventName: DragEvents, event: DragEventData) => {
     const _handlers: DragHandlers = {
       onDragStart: handlers.onDragStart,
       onDragMove: handlers.onDragMove,
@@ -34,10 +35,14 @@ export function useTouchDrag(
       callHandler("onDragStart", currentTouches);
       const element = elementRef.current;
       element?.addEventListener("touchmove", touchMove);
+      setIsDragging(true);
     }
   };
 
   const touchMove = (event: TouchEvent) => {
+    if (!isDragging) {
+      return;
+    }
     const currentTouches = getCurrentTouches(
       event,
       event.touches,
@@ -70,6 +75,7 @@ export function useTouchDrag(
     element?.removeEventListener("touchmove", touchMove);
     touches = null;
     initialTouches.current = null;
+    setIsDragging(false);
   };
   useEffect(() => {
     const element = elementRef.current;
@@ -83,4 +89,8 @@ export function useTouchDrag(
       element?.removeEventListener("touchmove", touchMove);
     };
   });
+
+  return {
+    isDragging,
+  };
 }
