@@ -1,6 +1,13 @@
+import React from "react";
+
 export type Dimension = {
   width: number;
   height: number;
+};
+
+export type StringDimensions = {
+  width: string;
+  height: string;
 };
 
 export interface IPoint {
@@ -29,3 +36,13 @@ export type DragHandlers = {
 };
 
 export type DragEvents = "onDragStart" | "onDragMove" | "onDragEnd";
+
+export type Direction =
+  | "left"
+  | "right"
+  | "top"
+  | "bottom"
+  | "topRight"
+  | "bottomRight"
+  | "bottomLeft"
+  | "topLeft";
