@@ -91,3 +91,51 @@ export interface HandleClassName {
   bottomLeft?: string;
   topLeft?: string;
 }
+
+export interface IState {
+  isResizing: boolean;
+  direction: Direction;
+  original: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  width: number | string;
+  height: number | string;
+
+  backgroundStyle: React.CSSProperties;
+  flexBasis?: string | number;
+}
+
+export const definedProps = [
+  "as",
+  "style",
+  "className",
+  "grid",
+  "snap",
+  "bounds",
+  "boundsByDirection",
+  "size",
+  "defaultSize",
+  "minWidth",
+  "minHeight",
+  "maxWidth",
+  "maxHeight",
+  "lockAspectRatio",
+  "lockAspectRatioExtraWidth",
+  "lockAspectRatioExtraHeight",
+  "enable",
+  "handleStyles",
+  "handleClasses",
+  "handleWrapperStyle",
+  "handleWrapperClass",
+  "children",
+  "onResizeStart",
+  "onResize",
+  "onResizeStop",
+  "handleComponent",
+  "scale",
+  "resizeRatio",
+  "snapGap",
+];

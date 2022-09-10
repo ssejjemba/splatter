@@ -5,6 +5,11 @@ export type Dimension = {
   height: number;
 };
 
+export type Size = {
+  width: number | string;
+  height: number | string;
+};
+
 export type StringDimensions = {
   width: string;
   height: string;

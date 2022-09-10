@@ -2,12 +2,26 @@ import React, { CSSProperties } from "react";
 import { Direction } from "../models";
 import { handleStyles } from "../utils/resize_utils";
 
-export function Resizer(props: {
+export type OnStartCallback = (
+  e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
+  dir: Direction
+) => void;
+
+export function ResizerHandle(props: {
   direction: Direction;
   className?: string;
   replaceStyles?: React.CSSProperties;
   children: React.ReactNode;
+  onResizeStart: OnStartCallback;
 }) {
+  const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    props.onResizeStart(e, props.direction);
+  };
+
+  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    props.onResizeStart(e, props.direction);
+  };
+
   const styles: CSSProperties = {
     position: "absolute",
     userSelect: "none",
@@ -25,6 +39,8 @@ export function Resizer(props: {
       onClick={(e) => {
         e.stopPropagation();
       }}
+      onMouseDown={onMouseDown}
+      onTouchStart={onTouchStart}
     >
       {props.children}
     </div>

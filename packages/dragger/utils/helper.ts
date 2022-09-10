@@ -25,9 +25,9 @@ export const hasDirection = (dir: string, target: string) =>
 
 export const findClosestSnap = (
   n: number,
-  snapArray: Array<number>,
-  snapGap: number
-) => {
+  snapArray: number[],
+  snapGap: number = 0
+): number => {
   const closestGapIndex = snapArray.reduce(
     (prev, curr, index) =>
       Math.abs(curr - n) < Math.abs(snapArray[prev] - n) ? index : prev,
@@ -41,7 +41,7 @@ export const findClosestSnap = (
 export const endsWith = (str: string, searchStr: string) =>
   str.substring(str.length - searchStr.length) === searchStr;
 
-export const getStringSize = (n: string | null | undefined) => {
+export const getStringSize = (n: string | number | null | undefined) => {
   if (n === null || n === undefined) {
     return 0;
   }
@@ -71,33 +71,65 @@ export const getStringSize = (n: string | null | undefined) => {
   return `${n}px`;
 };
 
-const getPixelSize = (size: string | null | undefined, parentSize: number) => {
+const getPixelSize = (
+  size: undefined | string | number,
+  parentSize: number,
+  innerWidth: number,
+  innerHeight: number
+) => {
   if (size && typeof size === "string") {
-    if (endsWith(size, "%")) {
+    if (size.endsWith("px")) {
+      return Number(size.replace("px", ""));
+    }
+    if (size.endsWith("%")) {
       const ratio = Number(size.replace("%", "")) / 100;
       return parentSize * ratio;
-    } else if (endsWith(size, "vw")) {
+    }
+    if (size.endsWith("vw")) {
       const ratio = Number(size.replace("vw", "")) / 100;
-      return window.innerWidth * ratio;
-    } else if (endsWith(size, "vh")) {
+      return innerWidth * ratio;
+    }
+    if (size.endsWith("vh")) {
       const ratio = Number(size.replace("vh", "")) / 100;
-      return window.innerHeight * ratio;
+      return innerHeight * ratio;
     }
   }
   return size;
 };
 
 export const calculateNewMax = (
-  parentSize: Dimension,
-  maxWidth: string,
-  maxHeight: string,
-  minWidth: string,
-  minHeight: string
+  parentSize: { width: number; height: number },
+  innerWidth: number,
+  innerHeight: number,
+  maxWidth?: string | number,
+  maxHeight?: string | number,
+  minWidth?: string | number,
+  minHeight?: string | number
 ) => {
-  const _maxWidth = getPixelSize(maxWidth, parentSize.width);
-  const _maxHeight = getPixelSize(maxHeight, parentSize.height);
-  const _minWidth = getPixelSize(minWidth, parentSize.width);
-  const _minHeight = getPixelSize(minHeight, parentSize.height);
+  const _maxWidth = getPixelSize(
+    maxWidth,
+    parentSize.width,
+    innerWidth,
+    innerHeight
+  );
+  const _maxHeight = getPixelSize(
+    maxHeight,
+    parentSize.height,
+    innerWidth,
+    innerHeight
+  );
+  const _minWidth = getPixelSize(
+    minWidth,
+    parentSize.width,
+    innerWidth,
+    innerHeight
+  );
+  const _minHeight = getPixelSize(
+    minHeight,
+    parentSize.height,
+    innerWidth,
+    innerHeight
+  );
   return {
     maxWidth: typeof _maxWidth === "undefined" ? undefined : Number(_maxWidth),
     maxHeight:
@@ -106,4 +138,21 @@ export const calculateNewMax = (
     minHeight:
       typeof _minHeight === "undefined" ? undefined : Number(_minHeight),
   };
+};
+
+export const isTouchEvent = (
+  event: MouseEvent | TouchEvent
+): event is TouchEvent => {
+  return Boolean(
+    (event as TouchEvent).touches && (event as TouchEvent).touches.length
+  );
+};
+
+export const isMouseEvent = (
+  event: MouseEvent | TouchEvent
+): event is MouseEvent => {
+  return Boolean(
+    ((event as MouseEvent).clientX || (event as MouseEvent).clientX === 0) &&
+      ((event as MouseEvent).clientY || (event as MouseEvent).clientY === 0)
+  );
 };
