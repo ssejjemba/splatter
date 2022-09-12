@@ -3,10 +3,10 @@
  */
 
 import React, { useRef } from "react";
-import { describe, it, vi, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, vi, expect, afterEach } from "vitest";
 import { render, fireEvent, screen } from "@testing-library/react";
 import { DragEventData } from "../../models";
-import { useMouseDrag } from "../useMouseDrag";
+import { useTouchDrag } from "../useTouchDrag";
 
 const preventDefault = vi.fn();
 
@@ -28,7 +28,7 @@ const onDragEnd = vi.fn().mockImplementation((event: DragEventData) => {
 
 const SampleComponent = () => {
   const ref = useRef<HTMLElement | null>(null);
-  const { isDragging } = useMouseDrag(ref, {
+  const { isDragging } = useTouchDrag(ref, {
     onDragEnd,
     onDragStart,
     onDragMove,
@@ -61,15 +61,15 @@ describe("This tests that the mouse drag hook functions correctly", () => {
     expect(screen.getByTestId("not-dragging")).toBeDefined();
 
     //  let's assume these coordinates coincide with the draggable container
-    const mouse = [
+    const touches = [
       { clientX: 10, clientY: 20 }, // initial
       { clientX: 15, clientY: 30 }, // final
     ];
 
     // when drag is made it swiches to dragging mode
-    // hold the mouse
-    fireEvent.mouseDown(containerElement, {
-      ...mouse[0],
+    // touch element
+    fireEvent.touchStart(containerElement, {
+      touches: [touches[0]],
       preventDefault,
       stopPropagation,
     });
@@ -79,9 +79,9 @@ describe("This tests that the mouse drag hook functions correctly", () => {
 
     expect(onDragStart).toBeCalledTimes(1);
     expect(dragStat?.distance).toBe(0);
-    // drag the mouse to final point
-    fireEvent.mouseMove(containerElement, {
-      ...mouse[1],
+    // touch drag element
+    fireEvent.touchMove(containerElement, {
+      touches: [touches[1]],
       preventDefault,
       stopPropagation,
     });
@@ -91,20 +91,21 @@ describe("This tests that the mouse drag hook functions correctly", () => {
         Math.round((dragStat?.distance + Number.EPSILON) * 100) / 100
       ).toBe(11.18);
     }
-    // release the mouse at this point
-    fireEvent.mouseUp(containerElement, {
-      ...mouse[1],
+    // release element
+    fireEvent.touchEnd(containerElement, {
+      changedTouches: [touches[1]],
       preventDefault,
       stopPropagation,
     });
+    expect(onDragEnd).toBeCalledTimes(1);
     // ends off in the not dragging mode
     expect(screen.queryByTestId("dragging")).toBeFalsy();
     expect(screen.getByTestId("not-dragging")).toBeDefined();
 
     // moving the mouse without holding it down on the element shouldn't call the move handler
     //  attempt to move back the block without holding the mouse
-    fireEvent.mouseMove(containerElement, {
-      ...mouse[0],
+    fireEvent.touchMove(containerElement, {
+      touches: [touches[1]],
       preventDefault,
       stopPropagation,
     });

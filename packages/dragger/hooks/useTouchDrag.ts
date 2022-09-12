@@ -39,8 +39,6 @@ export function useTouchDrag(
         return;
       } else {
         callHandler("onDragStart", currentTouches);
-        const element = elementRef.current;
-        element?.addEventListener("touchmove", touchMove);
         setIsDragging(true);
       }
     };
@@ -77,8 +75,6 @@ export function useTouchDrag(
           callHandler("onDragEnd", currentTouches);
         }
       }
-      const element = elementRef.current;
-      element?.removeEventListener("touchmove", touchMove);
       touches = null;
       initialTouches.current = null;
       setIsDragging(false);
@@ -86,6 +82,7 @@ export function useTouchDrag(
     const element = elementRef.current;
 
     element?.addEventListener("touchstart", touchStart);
+    element?.addEventListener("touchmove", touchMove);
     element?.addEventListener("touchend", touchEnd);
 
     return () => {
