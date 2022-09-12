@@ -55,6 +55,31 @@ export class Resizer extends PureComponent<IResizableProps, IState> {
   targetLeft = 0;
   targetTop = 0;
 
+  public static defaultProps = {
+    as: "div",
+    onResizeStart: () => {},
+    onResize: () => {},
+    onResizeStop: () => {},
+    enable: {
+      top: true,
+      right: true,
+      bottom: true,
+      left: true,
+      topRight: true,
+      bottomRight: true,
+      bottomLeft: true,
+      topLeft: true,
+    },
+    style: {},
+    grid: [1, 1],
+    lockAspectRatio: false,
+    lockAspectRatioExtraWidth: 0,
+    lockAspectRatioExtraHeight: 0,
+    scale: 1,
+    resizeRatio: 1,
+    snapGap: 0,
+  };
+
   get parentNode(): HTMLElement | null {
     if (!this.resizableElement) {
       return null;
