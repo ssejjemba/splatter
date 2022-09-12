@@ -50,8 +50,8 @@ afterEach(() => {
   onDragEnd.mockClear();
 });
 
-describe("This tests that the mouse drag hook functions correctly", () => {
-  it("It will correctly report mouse drag events fired on a component", async () => {
+describe("This tests that the touch drag hook functions correctly", () => {
+  it("It will correctly report touch drag events fired on a component", async () => {
     render(<SampleComponent />);
 
     const containerElement = screen.getByTestId("container");

@@ -6,8 +6,8 @@ import { DragEventData } from "../models";
 import { useDrag } from "./useDrag";
 
 export function useReposition(
-  defaults: { left: number; top: number },
-  elementRef: React.RefObject<HTMLElement>
+  elementRef: React.RefObject<HTMLElement>,
+  defaults: { left: number; top: number }
 ): { left: number; top: number; isRepositioning: boolean } {
   const [left, setLeft] = useState(defaults.left);
   const [top, setTop] = useState(defaults.top);
