@@ -71,7 +71,7 @@ export const getStringSize = (n: string | number | null | undefined) => {
   return `${n}px`;
 };
 
-const getPixelSize = (
+export const getPixelSize = (
   size: undefined | string | number,
   parentSize: number,
   innerWidth: number,
