@@ -56,7 +56,7 @@ const getAngleDeg = (p1: Pointer, p2: Pointer) => {
   return (Math.atan2(p1.y - p2.y, p1.x - p2.x) * 180) / Math.PI;
 };
 
-class Pointer implements IPoint {
+export class Pointer implements IPoint {
   x: number;
   y: number;
 

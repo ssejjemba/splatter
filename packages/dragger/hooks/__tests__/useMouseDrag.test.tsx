@@ -7,16 +7,25 @@ import { describe, it, vi, expect } from "vitest";
 import { render, fireEvent, screen } from "@testing-library/react";
 import { DragEventData } from "../../models";
 import { useMouseDrag } from "../useMouseDrag";
+import { Pointer } from "../../utils/drag_utils";
 
 const preventDefault = vi.fn();
 
 const stopPropagation = vi.fn();
 
-const onDragStart = vi.fn().mockImplementation((event: DragEventData) => {});
+let dragStat: DragEventData | null = null;
 
-const onDragMove = vi.fn().mockImplementation((event: DragEventData) => {});
+const onDragStart = vi.fn().mockImplementation((event: DragEventData) => {
+  dragStat = event;
+});
 
-const onDragEnd = vi.fn().mockImplementation((event: DragEventData) => {});
+const onDragMove = vi.fn().mockImplementation((event: DragEventData) => {
+  dragStat = event;
+});
+
+const onDragEnd = vi.fn().mockImplementation((event: DragEventData) => {
+  dragStat = event;
+});
 
 const SampleComponent = () => {
   const ref = useRef<HTMLElement | null>(null);
@@ -62,6 +71,7 @@ describe("This tests that the mouse drag hook functions correctly", () => {
     expect(screen.getByTestId("dragging")).toBeDefined();
 
     expect(onDragStart).toBeCalledTimes(1);
+    expect(dragStat?.distance).toBe(0);
     // drag the mouse to final point
     fireEvent.mouseMove(containerElement, {
       ...mouse[1],
@@ -69,6 +79,11 @@ describe("This tests that the mouse drag hook functions correctly", () => {
       stopPropagation,
     });
     expect(onDragMove).toBeCalledTimes(1);
+    if (dragStat?.distance !== undefined) {
+      expect(
+        Math.round((dragStat?.distance + Number.EPSILON) * 100) / 100
+      ).toBe(11.18);
+    }
     // release the mouse at this point
     fireEvent.mouseUp(containerElement, {
       ...mouse[1],
