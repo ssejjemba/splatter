@@ -15,10 +15,14 @@ export function ResizerHandle(props: {
   onResizeStart: OnStartCallback;
 }) {
   const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.nativeEvent.stopPropagation();
+    e.nativeEvent.preventDefault();
     props.onResizeStart(e, props.direction);
   };
 
   const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.nativeEvent.stopPropagation();
+    e.nativeEvent.preventDefault();
     props.onResizeStart(e, props.direction);
   };
 
@@ -39,7 +43,10 @@ export function ResizerHandle(props: {
       onClick={(e) => {
         e.stopPropagation();
       }}
-      onMouseDown={onMouseDown}
+      onMouseDown={(e) => {
+        e.nativeEvent.stopPropagation();
+        onMouseDown(e);
+      }}
       onTouchStart={onTouchStart}
     >
       {props.children}

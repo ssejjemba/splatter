@@ -26,20 +26,17 @@ export function useReposition(
   };
 
   const onDragStart = (event: DragEventData) => {
-    console.log("starting to reposition the block");
     if (elementRef && elementRef.current) {
       elementRef.current.style.zIndex = "9999";
     }
   };
 
   const onDragMove = (event: DragEventData) => {
-    console.log("is repositioning the block");
     setLeft(left + event.deltaX);
     setTop(top + event.deltaY);
   };
 
   const onDragEnd = (event: DragEventData) => {
-    console.log("stopped repositioning the block");
     if (elementRef && elementRef.current) {
       elementRef.current.style.zIndex = originalStackIndex.current;
     }

@@ -8,6 +8,12 @@
 }
 
 .block {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.block--container {
   display: flex;
   align-items: center;
   justify-content: center;
