@@ -10,6 +10,7 @@ interface IDraggableElementProps {
   as?: "div" | "svg" | "span" | "p" | React.ComponentType<any>;
   resizeProps?: IResizableProps;
   children?: React.ReactNode;
+  shouldDrag?: boolean;
 }
 
 export function DraggableElement({
@@ -19,10 +20,11 @@ export function DraggableElement({
   as,
   resizeProps,
   children,
+  shouldDrag = true,
 }: IDraggableElementProps) {
   const Wrapper = as || "div";
   const ref = useRef<HTMLElement | null>(null);
-  const { top, left } = useReposition(ref, defaultPosition);
+  const { top, left } = useReposition(ref, defaultPosition, shouldDrag);
 
   if (withResizing && resizeProps) {
     return (

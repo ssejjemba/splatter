@@ -6,7 +6,8 @@ let pointer: DragEventData | null = null;
 
 export function useMouseDrag(
   elementRef: React.RefObject<HTMLElement>,
-  handlers: DragHandlers
+  handlers: DragHandlers,
+  canDrag: boolean
 ): { isDragging: boolean } {
   const [isDragging, setIsDragging] = useState(false);
   const initialTouches = useRef<DragEventData | null>(null);
@@ -23,6 +24,9 @@ export function useMouseDrag(
       }
     };
     const handleMouseDown = (event: MouseEvent) => {
+      if (isDragging || !canDrag) {
+        return;
+      }
       const touch = [event];
       const currentTouches = getCurrentTouches(event, touch, null, null);
       pointer = currentTouches;
@@ -51,11 +55,11 @@ export function useMouseDrag(
     };
 
     const handleMouseUp = (event: MouseEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
       if (!isDragging) {
         return;
       }
+      event.preventDefault();
+      event.stopPropagation();
       const touch = [event];
       const currentTouches = getCurrentTouches(
         event,
@@ -75,15 +79,14 @@ export function useMouseDrag(
     element?.addEventListener("mousedown", handleMouseDown);
     element?.addEventListener("mousemove", handleMouseMove);
     element?.addEventListener("mouseup", handleMouseUp);
-    element?.addEventListener("mouseleave", handleMouseUp);
 
     return () => {
       element?.removeEventListener("mousedown", handleMouseDown);
       element?.removeEventListener("mouseup", handleMouseUp);
-      element?.addEventListener("mouseleave", handleMouseUp);
       element?.removeEventListener("mousemove", handleMouseMove);
     };
   }, [
+    canDrag,
     elementRef,
     handlers.onDragEnd,
     handlers.onDragMove,

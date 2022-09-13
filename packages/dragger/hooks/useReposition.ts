@@ -7,7 +7,8 @@ import { useDrag } from "./useDrag";
 
 export function useReposition(
   elementRef: React.RefObject<HTMLElement>,
-  defaults: { left: number; top: number }
+  defaults: { left: number; top: number },
+  canDrag: boolean
 ): {
   left: number;
   top: number;
@@ -32,6 +33,7 @@ export function useReposition(
   };
 
   const onDragMove = (event: DragEventData) => {
+    console.log("is repositioning the block");
     setLeft(left + event.deltaX);
     setTop(top + event.deltaY);
   };
@@ -49,11 +51,15 @@ export function useReposition(
     }
   }, [elementRef]);
 
-  const { isDragging } = useDrag(elementRef, {
-    onDragStart,
-    onDragMove,
-    onDragEnd,
-  });
+  const { isDragging } = useDrag(
+    elementRef,
+    {
+      onDragStart,
+      onDragMove,
+      onDragEnd,
+    },
+    canDrag
+  );
 
   return {
     left,

@@ -6,10 +6,11 @@ import { useTouchDrag } from "./useTouchDrag";
 
 export function useDrag(
   elementRef: React.RefObject<HTMLElement>,
-  handlers: DragHandlers
+  handlers: DragHandlers,
+  canDrag: boolean
 ): { isDragging: boolean } {
-  const mouseDrag = useMouseDrag(elementRef, handlers);
-  const touchDrag = useTouchDrag(elementRef, handlers);
+  const mouseDrag = useMouseDrag(elementRef, handlers, canDrag);
+  const touchDrag = useTouchDrag(elementRef, handlers, canDrag);
 
   return {
     isDragging: mouseDrag.isDragging || touchDrag.isDragging,

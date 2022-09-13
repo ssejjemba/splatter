@@ -6,7 +6,8 @@ let touches: DragEventData | null = null;
 
 export function useTouchDrag(
   elementRef: React.RefObject<HTMLElement>,
-  handlers: DragHandlers
+  handlers: DragHandlers,
+  canDrag: boolean
 ): { isDragging: boolean } {
   const [isDragging, setIsDragging] = useState(false);
   const initialTouches = useRef<DragEventData | null>(null);
@@ -24,6 +25,9 @@ export function useTouchDrag(
     };
 
     const touchStart = (event: TouchEvent) => {
+      if (isDragging || !canDrag) {
+        return;
+      }
       event.preventDefault();
       event.stopPropagation();
       const currentTouches = getCurrentTouches(
@@ -62,6 +66,9 @@ export function useTouchDrag(
       }
     };
     const touchEnd = (event: TouchEvent) => {
+      if (!isDragging) {
+        return;
+      }
       const currentTouches = getCurrentTouches(
         event,
         event.changedTouches,
@@ -91,6 +98,7 @@ export function useTouchDrag(
       element?.removeEventListener("touchmove", touchMove);
     };
   }, [
+    canDrag,
     elementRef,
     handlers.onDragEnd,
     handlers.onDragMove,

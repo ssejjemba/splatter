@@ -14,7 +14,7 @@ const DEFAULT_POSITION = {
 const SampleComponent = () => {
   const ref = useRef<HTMLElement | null>(null);
 
-  const { top, left } = useReposition(ref, DEFAULT_POSITION);
+  const { top, left } = useReposition(ref, DEFAULT_POSITION, true);
 
   return (
     <div

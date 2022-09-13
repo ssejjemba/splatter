@@ -28,11 +28,15 @@ const onDragEnd = vi.fn().mockImplementation((event: DragEventData) => {
 
 const SampleComponent = () => {
   const ref = useRef<HTMLElement | null>(null);
-  const { isDragging } = useMouseDrag(ref, {
-    onDragEnd,
-    onDragStart,
-    onDragMove,
-  });
+  const { isDragging } = useMouseDrag(
+    ref,
+    {
+      onDragEnd,
+      onDragStart,
+      onDragMove,
+    },
+    true
+  );
 
   return (
     <div data-testid="container" ref={ref as React.RefObject<HTMLDivElement>}>
