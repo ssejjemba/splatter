@@ -3,6 +3,15 @@ import { useReposition } from "../hooks/useReposition";
 import { IResizableProps } from "../models/props";
 import { Resizer } from "./Resizer";
 
+interface IDraggableElementProps {
+  defaultPosition: { top: number; left: number };
+  className?: string;
+  withResizing?: boolean;
+  as?: "div" | "svg" | "span" | "p" | React.ComponentType<any>;
+  resizeProps?: IResizableProps;
+  children?: React.ReactNode;
+}
+
 export function DraggableElement({
   defaultPosition,
   className,
@@ -10,14 +19,7 @@ export function DraggableElement({
   as,
   resizeProps,
   children,
-}: {
-  defaultPosition: { top: number; left: number };
-  className?: string;
-  withResizing?: boolean;
-  as?: "div" | "svg" | "span" | "p" | React.ComponentType<any>;
-  resizeProps?: IResizableProps;
-  children?: React.ReactNode;
-}) {
+}: IDraggableElementProps) {
   const Wrapper = as || "div";
   const ref = useRef<HTMLElement | null>(null);
   const { top, left } = useReposition(ref, defaultPosition);
@@ -38,6 +40,7 @@ export function DraggableElement({
     <Wrapper
       ref={ref}
       style={{ position: "relative", top: `${top}px`, left: `${left}px` }}
+      className={className}
     >
       {children}
     </Wrapper>

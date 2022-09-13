@@ -1,0 +1,22 @@
+.container {
+  display: block;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  padding: 0;
+}
+
+.block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  user-select: none;
+  width: 300px;
+  height: 200px;
+  background-color: orangered;
+  border-radius: 8px;
+  align-items: center;
+  color: azure;
+}

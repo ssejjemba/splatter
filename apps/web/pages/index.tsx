@@ -1,11 +1,11 @@
 import { SelectorProvider } from "selector";
+import { Sample } from "../components/sample/Sample";
 
 export default function Web() {
   return (
     <div>
-      <h1>Web</h1>
       <SelectorProvider>
-        <div></div>
+        <Sample />
       </SelectorProvider>
     </div>
   );
