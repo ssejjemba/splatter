@@ -8,9 +8,19 @@ import { useDrag } from "./useDrag";
 export function useReposition(
   elementRef: React.RefObject<HTMLElement>,
   defaults: { left: number; top: number }
-): { left: number; top: number; isRepositioning: boolean } {
+): {
+  left: number;
+  top: number;
+  isRepositioning: boolean;
+  setDimensions: (newDimens: { left: number; top: number }) => void;
+} {
   const [left, setLeft] = useState(defaults.left);
   const [top, setTop] = useState(defaults.top);
+
+  const setDimensions = (newDimens: { left: number; top: number }) => {
+    setLeft(newDimens.left);
+    setTop(newDimens.top);
+  };
 
   const onDragStart = (event: DragEventData) => {
     console.log("starting to reposition the block");
@@ -35,5 +45,6 @@ export function useReposition(
     left,
     top,
     isRepositioning: isDragging,
+    setDimensions,
   };
 }
