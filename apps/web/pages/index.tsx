@@ -5,9 +5,7 @@ export default function Web() {
     <div>
       <h1>Web</h1>
       <SelectorProvider>
-        <div>
-          
-        </div>
+        <div></div>
       </SelectorProvider>
     </div>
   );
