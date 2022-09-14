@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { DragEventData, DragEvents, DragHandlers } from "../models";
 import { getCurrentTouches } from "../utils/drag_utils";
+import useMouseEvents from "./useMouseEvents";
 
 let pointer: DragEventData | null = null;
 
@@ -12,97 +14,76 @@ export function useMouseDrag(
   const [isDragging, setIsDragging] = useState(false);
   const initialTouches = useRef<DragEventData | null>(null);
 
-  useEffect(() => {
-    const callHandler = (eventName: DragEvents, event: DragEventData) => {
-      const _handlers: DragHandlers = {
-        onDragStart: handlers.onDragStart,
-        onDragMove: handlers.onDragMove,
-        onDragEnd: handlers.onDragEnd,
-      };
-      if (eventName && _handlers[eventName]) {
-        _handlers[eventName](event);
-      }
+  const { onMouseDown, onMouseLeave, onMouseMove, onMouseUp } =
+    useMouseEvents(elementRef);
+
+  const callHandler = (eventName: DragEvents, event: DragEventData) => {
+    const _handlers: DragHandlers = {
+      onDragStart: handlers.onDragStart,
+      onDragMove: handlers.onDragMove,
+      onDragEnd: handlers.onDragEnd,
     };
-    const handleMouseDown = (event: MouseEvent) => {
-      if (isDragging || !canDrag) {
-        return;
-      }
-      const touch = [event];
-      const currentTouches = getCurrentTouches(event, touch, null, null);
-      pointer = currentTouches;
-      initialTouches.current = currentTouches;
-      callHandler("onDragStart", currentTouches);
+    if (eventName && _handlers[eventName]) {
+      _handlers[eventName](event);
+    }
+  };
 
-      setIsDragging(true);
-    };
+  const handleMouseDown = (event: MouseEvent) => {
+    if (isDragging || !canDrag) {
+      return;
+    }
+    const touch = [event];
+    const currentTouches = getCurrentTouches(event, touch, null, null);
+    pointer = currentTouches;
+    initialTouches.current = currentTouches;
+    callHandler("onDragStart", currentTouches);
 
-    const handleMouseMove = (event: MouseEvent) => {
-      if (!canDrag) {
-        cancelTheDrag();
-      }
-      if (!isDragging) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-      const touch = [event];
-      const currentTouches = getCurrentTouches(
-        event,
-        touch,
-        pointer,
-        initialTouches.current
-      );
-      pointer = currentTouches;
+    setIsDragging(true);
+  };
 
-      callHandler("onDragMove", currentTouches);
-    };
+  const handleMouseMove = (event: MouseEvent) => {
+    if (!isDragging) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    const touch = [event];
+    const currentTouches = getCurrentTouches(
+      event,
+      touch,
+      pointer,
+      initialTouches.current
+    );
+    pointer = currentTouches;
 
-    const handleMouseUp = (event: MouseEvent) => {
-      if (!isDragging) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-      const touch = [event];
-      const currentTouches = getCurrentTouches(
-        event,
-        touch,
-        pointer,
-        initialTouches.current
-      );
-      pointer = currentTouches;
-      initialTouches.current = currentTouches;
-      callHandler("onDragEnd", currentTouches);
-      pointer = null;
-      initialTouches.current = null;
-      setIsDragging(false);
-    };
+    callHandler("onDragMove", currentTouches);
+  };
 
-    const cancelTheDrag = () => {
-      // cance the drag
-      pointer = null;
-      initialTouches.current = null;
-      setIsDragging(false);
-    };
-    const element = elementRef.current;
+  const handleMouseUp = (event: MouseEvent) => {
+    if (!isDragging) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    const touch = [event];
+    const currentTouches = getCurrentTouches(
+      event,
+      touch,
+      pointer,
+      initialTouches.current
+    );
+    pointer = currentTouches;
+    initialTouches.current = currentTouches;
+    callHandler("onDragEnd", currentTouches);
+    pointer = null;
+    initialTouches.current = null;
+    setIsDragging(false);
+  };
 
-    element?.addEventListener("mousedown", handleMouseDown);
-    element?.addEventListener("mousemove", handleMouseMove);
-    element?.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      element?.removeEventListener("mousedown", handleMouseDown);
-      element?.removeEventListener("mouseup", handleMouseUp);
-      element?.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, [
-    canDrag,
-    elementRef,
-    handlers.onDragEnd,
-    handlers.onDragMove,
-    handlers.onDragStart,
-    isDragging,
-  ]);
+  onMouseDown(handleMouseDown);
+  onMouseMove(handleMouseMove);
+  onMouseLeave(handleMouseUp);
+  onMouseUp(handleMouseUp);
 
   return {
     isDragging,
