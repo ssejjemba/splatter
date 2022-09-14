@@ -42,6 +42,9 @@ export function useMouseDrag(
   };
 
   const handleMouseMove = (event: MouseEvent) => {
+    if (!canDrag) {
+      cancelDrag();
+    }
     if (!isDragging) {
       return;
     }
@@ -75,6 +78,12 @@ export function useMouseDrag(
     pointer = currentTouches;
     initialTouches.current = currentTouches;
     callHandler("onDragEnd", currentTouches);
+    pointer = null;
+    initialTouches.current = null;
+    setIsDragging(false);
+  };
+
+  const cancelDrag = () => {
     pointer = null;
     initialTouches.current = null;
     setIsDragging(false);

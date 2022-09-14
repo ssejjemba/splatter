@@ -46,7 +46,7 @@ export function useTouchDrag(
   };
 
   const touchMove = (event: TouchEvent) => {
-    if (!isDragging) {
+    if (!isDragging || !canDrag) {
       return;
     }
     const currentTouches = getCurrentTouches(
@@ -64,7 +64,7 @@ export function useTouchDrag(
     }
   };
   const touchEnd = (event: TouchEvent) => {
-    if (!isDragging) {
+    if (!isDragging || !canDrag) {
       return;
     }
     const currentTouches = getCurrentTouches(
