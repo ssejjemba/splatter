@@ -2,6 +2,7 @@ import { useState, RefObject, useRef } from "react";
 import { useMouseEvents } from "dragger";
 import { SelectorHandlers, SelectorPosition } from "../models";
 import { calculateNewBoudingRect } from "../utils/helper";
+import { SELECTOR_ID } from "../providers/SelectorProvider";
 
 export const useMouseSelector = (
   ref: RefObject<HTMLElement>,
@@ -17,6 +18,13 @@ export const useMouseSelector = (
     useMouseEvents(ref);
 
   const handleMouseDown = (event: MouseEvent) => {
+    const path = event.composedPath();
+    for (let item of path) {
+      // @ts-ignore
+      if (item.id === SELECTOR_ID) {
+        return;
+      }
+    }
     const { clientX, clientY } = event;
     const newBoundRect = {
       left: clientX,

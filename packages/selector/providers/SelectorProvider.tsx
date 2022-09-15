@@ -110,6 +110,7 @@ export const SelectorProvider = ({
           <div
             id={SELECTOR_ID}
             className={selectorClassName}
+            onMouseDown={(e) => e.preventDefault()}
             style={{
               border: "1px dashed blue",
               ...selectorStyles,
