@@ -1,12 +1,11 @@
 import { useState, RefObject, useRef } from "react";
 import { useMouseEvents } from "dragger";
-import { SelectorPosition } from "../models";
+import { SelectorHandlers, SelectorPosition } from "../models";
 import { calculateNewBoudingRect } from "../utils/helper";
 
 export const useMouseSelector = (
   ref: RefObject<HTMLElement>,
-  commitSelection: (selection: SelectorPosition) => void,
-  cancelSelection: () => void
+  handlers: SelectorHandlers
 ): { isSelecting: boolean; selectorData: SelectorPosition | null } => {
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectorData, setSelectorData] = useState<SelectorPosition | null>(
@@ -28,6 +27,10 @@ export const useMouseSelector = (
     initialData.current = newBoundRect;
     setSelectorData(newBoundRect);
     setIsSelecting(true);
+    handlers.createSelection &&
+      handlers.createSelection({
+        ...selectorData,
+      } as SelectorPosition);
   };
 
   const handleMouseMove = (event: MouseEvent) => {
@@ -43,17 +46,24 @@ export const useMouseSelector = (
     });
 
     setSelectorData(newSelectorData);
+    handlers.expandSelection &&
+      handlers.expandSelection({
+        ...selectorData,
+      } as SelectorPosition);
   };
 
   const handleMouseUp = (event: MouseEvent) => {
-    commitSelection({ ...selectorData } as SelectorPosition);
+    handlers.commitSelection &&
+      handlers.commitSelection({
+        ...selectorData,
+      } as SelectorPosition);
     initialData.current = null;
     setSelectorData(null);
     setIsSelecting(false);
   };
 
   const handleMouseLeave = (event: MouseEvent) => {
-    cancelSelection();
+    handlers.cancelSelection && handlers.cancelSelection();
     initialData.current = null;
     setSelectorData(null);
     setIsSelecting(false);

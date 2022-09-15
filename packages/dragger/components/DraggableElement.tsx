@@ -98,7 +98,12 @@ export function DraggableElement({
   return (
     <Wrapper
       ref={ref}
-      style={{ position: "relative", top: `${top}px`, left: `${left}px` }}
+      style={{
+        position: "relative",
+        top: `${top}px`,
+        left: `${left}px`,
+        display: "inline-block",
+      }}
       className={className}
     >
       {children}

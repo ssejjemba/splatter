@@ -15,3 +15,10 @@ export type CursorPosition = {
   x: number;
   y: number;
 };
+
+export type SelectorHandlers = {
+  createSelection?: (selection: SelectorPosition) => void;
+  expandSelection?: (selection: SelectorPosition) => void;
+  commitSelection?: (selection: SelectorPosition) => void;
+  cancelSelection?: () => void;
+};
