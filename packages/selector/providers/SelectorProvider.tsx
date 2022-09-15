@@ -63,13 +63,11 @@ export const SelectorProvider = ({
   };
 
   const cancelSelection = () => {
-    console.log("canceled selection");
     setSelectionClientRect(null);
     onCancelSelection();
   };
 
   const commitSelection = () => {
-    console.log("confirmed selection");
     onConfirmSelection();
   };
 
