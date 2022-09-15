@@ -15,6 +15,7 @@
     "eslint-config-custom": "workspace:*",
     "react": "^18.2.0",
     "tsconfig": "workspace:*",
+    "dragger": "workspace:*",
     "typescript": "^4.5.2"
   },
   "dependencies": {
