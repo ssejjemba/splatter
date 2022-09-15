@@ -52,7 +52,15 @@ export const useMouseSelector = (
       } as SelectorPosition);
   };
 
-  const handleMouseUp = (event: MouseEvent) => {
+  const handleMouseUp = () => {
+    if (!isSelecting || !selectorData) {
+      return;
+    }
+    // if area of the selection is smaller than 9px cancel the selection
+    if (selectorData.width < 3 && selectorData.height < 3) {
+      handleMouseLeave();
+      return;
+    }
     handlers.commitSelection &&
       handlers.commitSelection({
         ...selectorData,
@@ -62,7 +70,10 @@ export const useMouseSelector = (
     setIsSelecting(false);
   };
 
-  const handleMouseLeave = (event: MouseEvent) => {
+  const handleMouseLeave = () => {
+    if (!isSelecting) {
+      return;
+    }
     handlers.cancelSelection && handlers.cancelSelection();
     initialData.current = null;
     setSelectorData(null);

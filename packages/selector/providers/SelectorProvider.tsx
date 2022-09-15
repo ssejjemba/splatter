@@ -53,13 +53,11 @@ export const SelectorProvider = ({
   const [activeBlocks, setActiveBlocks] = useState<Array<string>>([]);
 
   const createSelection = (selectionRect: SelectorPosition) => {
-    console.log(JSON.stringify(selectionRect, null, 2));
     setSelectionClientRect(selectionRect);
     onCreateSelection();
   };
 
   const expandSelection = (selectionRect: SelectorPosition) => {
-    console.log(JSON.stringify(selectionRect, null, 2));
     setSelectionClientRect(selectionRect);
     onExpandSelection();
   };
@@ -71,7 +69,7 @@ export const SelectorProvider = ({
   };
 
   const commitSelection = () => {
-    console.log("canceled selection");
+    console.log("confirmed selection");
     onConfirmSelection();
   };
 
@@ -107,6 +105,7 @@ export const SelectorProvider = ({
     <SelectionContext.Provider value={store}>
       <div
         className={containerClassName}
+        ref={elementRef as RefObject<HTMLDivElement>}
         style={{ ...containerStyles, position: "relative" }}
       >
         {selectionClientRect && (
