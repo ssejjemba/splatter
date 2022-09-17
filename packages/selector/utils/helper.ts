@@ -36,3 +36,53 @@ export function calculateNewBoudingRect(
 function isPositive(x: number): boolean {
   return x > 0;
 }
+
+type BoxBoundary = {
+  maxX: number;
+  minX: number;
+  maxY: number;
+  minY: number;
+};
+
+function getBoxBoundary(boxBoundingRect: SelectorPosition): BoxBoundary {
+  return {
+    minX: boxBoundingRect.left,
+    maxX: boxBoundingRect.left + boxBoundingRect.width,
+    minY: boxBoundingRect.top,
+    maxY: boxBoundingRect.top + boxBoundingRect.height,
+  };
+}
+
+export function checkBoundaryForIntersection(
+  blockBoundary: SelectorPosition,
+  selectionBoundary: SelectorPosition
+): boolean {
+  // Call them box a (selection box) and box b (target box)
+  const boxABoundary = getBoxBoundary(selectionBoundary);
+
+  const boxBBoundary = getBoxBoundary(blockBoundary);
+
+  return (
+    boxBBoundary.minX >= boxABoundary.minX &&
+    boxBBoundary.maxX <= boxABoundary.maxX &&
+    boxBBoundary.minY >= boxABoundary.minY &&
+    boxBBoundary.maxY <= boxABoundary.maxY
+  );
+}
+
+export function checkBoundaryForOverlap(
+  blockBoundary: SelectorPosition,
+  selectionBoundary: SelectorPosition
+): boolean {
+  // Call them box a (selection box) and box b (target box)
+  const boxABoundary = getBoxBoundary(selectionBoundary);
+
+  const boxBBoundary = getBoxBoundary(blockBoundary);
+
+  return (
+    boxBBoundary.minX >= boxABoundary.minX ||
+    boxBBoundary.maxX <= boxABoundary.maxX ||
+    boxBBoundary.minY >= boxABoundary.minY ||
+    boxBBoundary.maxY <= boxABoundary.maxY
+  );
+}
