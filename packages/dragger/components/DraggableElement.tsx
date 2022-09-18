@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useReposition } from "../hooks/useReposition";
+import { Direction } from "../models";
 import { IResizableProps } from "../models/props";
 import { hasDirection } from "../utils/helper";
 import { Resizer } from "./Resizer";
@@ -34,60 +35,95 @@ export function DraggableElement({
     canDrag
   );
 
+  const handleResizeStart = useCallback(
+    (
+      ev: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>,
+      dir: Direction,
+      elRef: HTMLElement
+    ) => {
+      setIsResizing(true);
+      if (resizeProps && resizeProps.onResizeStart) {
+        resizeProps.onResizeStart(ev, dir, elRef);
+      }
+    },
+    [resizeProps]
+  );
+
+  const handleResize = useCallback(
+    (
+      ev: MouseEvent | TouchEvent,
+      dir: Direction,
+      elRef: HTMLElement,
+      delta: { width: number; height: number }
+    ) => {
+      const positionDelta = {
+        top: 0,
+        left: 0,
+      };
+      if (hasDirection("top", dir)) {
+        // change the position of the top by this change
+        if (sizeRef.current) {
+          positionDelta.top = delta.height - sizeRef.current.height;
+        } else {
+          positionDelta.top = delta.height;
+        }
+      }
+      if (hasDirection("left", dir)) {
+        // change the position of the left by this change
+        if (sizeRef.current) {
+          positionDelta.left = delta.width - sizeRef.current.width;
+        } else {
+          positionDelta.left = delta.width;
+        }
+      }
+
+      sizeRef.current = delta;
+
+      setDimensions({
+        left: left - positionDelta.left,
+        top: top - positionDelta.top,
+      });
+      if (resizeProps && resizeProps.onResize) {
+        resizeProps.onResize(ev, dir, elRef, delta);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [resizeProps]
+  );
+
+  const handleResizeStop = useCallback(
+    (
+      ev: MouseEvent | TouchEvent,
+      dir: Direction,
+      elRef: HTMLElement,
+      delta: { width: number; height: number }
+    ) => {
+      sizeRef.current = null;
+      setIsResizing(false);
+      if (resizeProps && resizeProps.onResizeStop) {
+        resizeProps.onResizeStop(ev, dir, elRef, delta);
+      }
+    },
+    [resizeProps]
+  );
+
   if (withResizing && resizeProps) {
     return (
       <Wrapper
         ref={ref}
-        style={{ position: "relative", top: `${top}px`, left: `${left}px` }}
+        style={{
+          position: "relative",
+          top: `${top}px`,
+          left: `${left}px`,
+          display: "inline-block",
+        }}
         className={className}
       >
         <Resizer
           {...resizeProps}
-          onResizeStart={(ev, dir, elRef) => {
-            setIsResizing(true);
-            if (resizeProps.onResizeStart) {
-              resizeProps.onResizeStart(ev, dir, elRef);
-            }
-          }}
-          onResize={(ev, dir, elRef, delta) => {
-            const positionDelta = {
-              top: 0,
-              left: 0,
-            };
-            if (hasDirection("top", dir)) {
-              // change the position of the top by this change
-              if (sizeRef.current) {
-                positionDelta.top = delta.height - sizeRef.current.height;
-              } else {
-                positionDelta.top = delta.height;
-              }
-            }
-            if (hasDirection("left", dir)) {
-              // change the position of the left by this change
-              if (sizeRef.current) {
-                positionDelta.left = delta.width - sizeRef.current.width;
-              } else {
-                positionDelta.left = delta.width;
-              }
-            }
-
-            sizeRef.current = delta;
-
-            setDimensions({
-              left: left - positionDelta.left,
-              top: top - positionDelta.top,
-            });
-            if (resizeProps.onResize) {
-              resizeProps.onResize(ev, dir, elRef, delta);
-            }
-          }}
-          onResizeStop={(ev, dir, elRef, delta) => {
-            sizeRef.current = null;
-            setIsResizing(false);
-            if (resizeProps.onResizeStop) {
-              resizeProps.onResizeStop(ev, dir, elRef, delta);
-            }
-          }}
+          onResizeStart={handleResizeStart}
+          onResize={handleResize}
+          onResizeStop={handleResizeStop}
         >
           {children}
         </Resizer>
