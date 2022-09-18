@@ -1,22 +1,18 @@
 import React, {
   createContext,
   RefObject,
+  useCallback,
   useEffect,
   useRef,
   useState,
 } from "react";
 import { useMouseSelector } from "../hooks/useMouseSelector";
 import "intersection-observer";
-import { SelectorPosition } from "../models";
-
-type SelectorProviderStore = {
-  isSelecting: boolean;
-  selectionClientRect: SelectorPosition | null;
-  activeBlocks: Array<string>;
-  activateBlock: (id: string) => void;
-  deactivateBlock: (id: string) => void;
-  clearActiveBlocks: () => void;
-};
+import {
+  SelectionSettings,
+  SelectorPosition,
+  SelectorProviderStore,
+} from "../models";
 
 export const SelectionContext = createContext<SelectorProviderStore | null>(
   null
@@ -34,6 +30,7 @@ export const SelectorProvider = ({
   onExpandSelection = () => {},
   onCancelSelection = () => {},
   onConfirmSelection = () => {},
+  selectionSettings = { isActiveOn: "intersection" },
 }: {
   children: React.ReactNode;
   selectorStyles?: React.CSSProperties;
@@ -44,6 +41,7 @@ export const SelectorProvider = ({
   onExpandSelection?: () => void;
   onConfirmSelection?: () => void;
   onCancelSelection?: () => void;
+  selectionSettings?: SelectionSettings;
 }) => {
   const [selectionClientRect, setSelectionClientRect] =
     useState<SelectorPosition | null>(null);
@@ -52,24 +50,30 @@ export const SelectorProvider = ({
 
   const [activeBlocks, setActiveBlocks] = useState<Array<string>>([]);
 
-  const createSelection = (selectionRect: SelectorPosition) => {
-    setSelectionClientRect(selectionRect);
-    onCreateSelection();
-  };
+  const createSelection = useCallback(
+    (selectionRect: SelectorPosition) => {
+      setSelectionClientRect(selectionRect);
+      onCreateSelection();
+    },
+    [onCreateSelection]
+  );
 
-  const expandSelection = (selectionRect: SelectorPosition) => {
-    setSelectionClientRect(selectionRect);
-    onExpandSelection();
-  };
+  const expandSelection = useCallback(
+    (selectionRect: SelectorPosition) => {
+      setSelectionClientRect(selectionRect);
+      onExpandSelection();
+    },
+    [onExpandSelection]
+  );
 
-  const cancelSelection = () => {
+  const cancelSelection = useCallback(() => {
     setSelectionClientRect(null);
     onCancelSelection();
-  };
+  }, [onCancelSelection]);
 
-  const commitSelection = () => {
+  const commitSelection = useCallback(() => {
     onConfirmSelection();
-  };
+  }, [onConfirmSelection]);
 
   const { isSelecting } = useMouseSelector(elementRef, {
     createSelection,
@@ -98,6 +102,7 @@ export const SelectorProvider = ({
     activateBlock,
     deactivateBlock,
     clearActiveBlocks,
+    selectionSettings,
   };
   return (
     <SelectionContext.Provider value={store}>

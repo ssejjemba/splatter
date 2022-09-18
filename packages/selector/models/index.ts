@@ -22,3 +22,15 @@ export type SelectorHandlers = {
   commitSelection?: (selection: SelectorPosition) => void;
   cancelSelection?: () => void;
 };
+
+export type SelectorProviderStore = {
+  isSelecting: boolean;
+  selectionClientRect: SelectorPosition | null;
+  activeBlocks: Array<string>;
+  activateBlock: (id: string) => void;
+  deactivateBlock: (id: string) => void;
+  clearActiveBlocks: () => void;
+  selectionSettings: SelectionSettings;
+};
+
+export type SelectionSettings = { isActiveOn: "overlap" | "intersection" };
