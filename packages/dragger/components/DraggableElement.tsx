@@ -87,8 +87,7 @@ export function DraggableElement({
         resizeProps.onResize(ev, dir, elRef, delta);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [resizeProps]
+    [left, resizeProps, setDimensions, top]
   );
 
   const handleResizeStop = useCallback(
